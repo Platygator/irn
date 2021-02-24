@@ -19,15 +19,10 @@ CAT_NAME_TO_NUM = dict(zip(CAT_LIST, range(len(CAT_LIST))))
 cls_labels_dict = np.load('boulderset/cls_labels.npy', allow_pickle=True).item()
 
 
-def decode_int_filename(int_filename):
-    s = str(int(int_filename))
-    return s[:4] + '_' + s[4:]
-
-
 def load_image_label_from_xml(img_name, bset_root):
     from xml.dom import minidom
 
-    elem_list = minidom.parse(os.path.join(bset_root, ANNOT_FOLDER_NAME, decode_int_filename(img_name) + '.xml')).getElementsByTagName('name')
+    elem_list = minidom.parse(os.path.join(bset_root, ANNOT_FOLDER_NAME, img_name + '.xml')).getElementsByTagName('name')
 
     multi_cls_lab = np.zeros((N_CAT), np.float32)
 
@@ -59,7 +54,7 @@ def get_img_path(img_name, bset_root):
 
 def load_img_name_list(dataset_path):
 
-    img_name_list = np.loadtxt(dataset_path, dtype=np.int32)
+    img_name_list = np.loadtxt(dataset_path, dtype=str)
 
     return img_name_list
 
@@ -131,8 +126,7 @@ class BoulderImageDataset(Dataset):
         return len(self.img_name_list)
 
     def __getitem__(self, idx):
-        name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        name_str = self.img_name_list[idx]
 
         img = np.asarray(imageio.imread(get_img_path(name_str, self.bset_root)))
 
