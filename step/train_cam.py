@@ -44,6 +44,8 @@ def run(args):
     train_dataset = voc12.dataloader.VOC12ClassificationDataset(args.train_list, voc12_root=args.voc12_root,
                                                                 resize_long=(320, 640), hor_flip=True,
                                                                 crop_size=512, crop_method="random")
+    # TODO Check if images get loaded correctly
+    # print(train_dataset[0])
     train_data_loader = DataLoader(train_dataset, batch_size=args.cam_batch_size,
                                    shuffle=True, num_workers=args.num_workers, pin_memory=True, drop_last=True)
     max_step = (len(train_dataset) // args.cam_batch_size) * args.cam_num_epoches
@@ -59,7 +61,8 @@ def run(args):
         {'params': param_groups[1], 'lr': 10*args.cam_learning_rate, 'weight_decay': args.cam_weight_decay},
     ], lr=args.cam_learning_rate, weight_decay=args.cam_weight_decay, max_step=max_step)
 
-    model = torch.nn.DataParallel(model).cuda()
+    # model = torch.nn.DataParallel(model).cuda()
+    model = model.to(torch.device('cuda:0'))
     model.train()
 
     avg_meter = pyutils.AverageMeter()
@@ -72,7 +75,7 @@ def run(args):
 
         for step, pack in enumerate(train_data_loader):
 
-            img = pack['img']
+            img = pack['img'].cuda(non_blocking=True)
             label = pack['label'].cuda(non_blocking=True)
 
             x = model(img)
