@@ -2,7 +2,9 @@
 import numpy as np
 import os
 from chainercv.datasets import VOCSemanticSegmentationDataset
+# TODO rewrite this class
 from chainercv.evaluations import calc_semantic_segmentation_confusion
+
 
 def run(args):
     dataset = VOCSemanticSegmentationDataset(split=args.chainer_eval_set, data_dir=args.voc12_root)
