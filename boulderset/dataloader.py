@@ -47,8 +47,8 @@ def load_image_label_list_from_xml(img_name_list, bset_root):
 
 def load_image_label_list_from_npy(img_name_list):
 
-    return np.array([cls_labels_dict[img_name] for img_name in img_name_list])
-    # TODO always load the same one. Check Syntax
+    # return np.array([cls_labels_dict[img_name] for img_name in img_name_list])
+    return np.array([[1, 1] for k in img_name_list])
 
 
 def get_img_path(img_name, bset_root):
@@ -162,10 +162,10 @@ class BoulderImageDataset(Dataset):
 
 class BoulderClassificationDataset(BoulderImageDataset):
 
-    def __init__(self, img_name_list_path, voc12_root,
+    def __init__(self, img_name_list_path, bset_root,
                  resize_long=None, rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False,
                  crop_size=None, crop_method=None):
-        super().__init__(img_name_list_path, voc12_root,
+        super().__init__(img_name_list_path, bset_root,
                  resize_long, rescale, img_normal, hor_flip,
                  crop_size, crop_method)
         self.label_list = load_image_label_list_from_npy(self.img_name_list)
