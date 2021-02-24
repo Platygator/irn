@@ -213,12 +213,12 @@ class BoulderClassificationDatasetMSF(BoulderClassificationDataset):
 
 class BoulderSegmentationDataset(Dataset):
 
-    def __init__(self, img_name_list_path, label_dir, crop_size, voc12_root,
+    def __init__(self, img_name_list_path, label_dir, crop_size, bset_root,
                  rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False,
-                 crop_method = 'random'):
+                 crop_method='random'):
 
         self.img_name_list = load_img_name_list(img_name_list_path)
-        self.voc12_root = voc12_root
+        self.bset_root = bset_root
 
         self.label_dir = label_dir
 
@@ -235,7 +235,7 @@ class BoulderSegmentationDataset(Dataset):
         name = self.img_name_list[idx]
         name_str = decode_int_filename(name)
 
-        img = imageio.imread(get_img_path(name_str, self.voc12_root))
+        img = imageio.imread(get_img_path(name_str, self.bset_root))
         label = imageio.imread(os.path.join(self.label_dir, name_str + '.png'))
 
         img = np.asarray(img)
@@ -260,7 +260,7 @@ class BoulderSegmentationDataset(Dataset):
         return {'name': name, 'img': img, 'label': label}
 
 
-class VOC12AffinityDataset(BoulderSegmentationDataset):
+class BoulderOC12AffinityDataset(BoulderSegmentationDataset):
     def __init__(self, img_name_list_path, label_dir, crop_size, bset_root,
                  indices_from, indices_to,
                  rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False, crop_method=None):
