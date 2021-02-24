@@ -18,6 +18,7 @@ def _work(process_id, model, dataset, args):
 
     databin = dataset[process_id]
     n_gpus = torch.cuda.device_count()
+    print("num_work_gpu: ", args.num_workers // n_gpus)
     data_loader = DataLoader(databin, shuffle=False, num_workers=args.num_workers // n_gpus, pin_memory=False)
 
     with torch.no_grad(), cuda.device(process_id):
