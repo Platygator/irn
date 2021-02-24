@@ -41,16 +41,17 @@ def run(args):
     model = getattr(importlib.import_module(args.cam_network), 'Net')()
 
 
-    train_dataset = boulderset.dataloader.BoulderClassificationDataset(args.train_list, voc12_root=args.bset_root,
+    train_dataset = boulderset.dataloader.BoulderClassificationDataset(args.train_list, bset_root=args.bset_root,
                                                                 resize_long=(320, 640), hor_flip=True,
                                                                 crop_size=512, crop_method="random")
+    # TODO uses VOC image names on Bset path
     # TODO Check if images get loaded correctly
     # print(train_dataset[0])
     train_data_loader = DataLoader(train_dataset, batch_size=args.cam_batch_size,
                                    shuffle=True, num_workers=args.num_workers, pin_memory=True, drop_last=True)
     max_step = (len(train_dataset) // args.cam_batch_size) * args.cam_num_epoches
 
-    val_dataset = boulderset.dataloader.BoulderClassificationDataset(args.val_list, voc12_root=args.bset_root,
+    val_dataset = boulderset.dataloader.BoulderClassificationDataset(args.val_list, bset_root=args.bset_root,
                                                               crop_size=512)
     val_data_loader = DataLoader(val_dataset, batch_size=args.cam_batch_size,
                                  shuffle=False, num_workers=args.num_workers, pin_memory=True, drop_last=True)
