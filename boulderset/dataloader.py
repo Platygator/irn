@@ -47,8 +47,6 @@ def load_image_label_list_from_npy(img_name_list):
 
 
 def get_img_path(img_name, bset_root):
-    if not isinstance(img_name, str):
-        img_name = decode_int_filename(img_name)
     return os.path.join(bset_root, IMG_FOLDER_NAME, img_name + '.png')
 
 
@@ -225,8 +223,7 @@ class BoulderSegmentationDataset(Dataset):
         return len(self.img_name_list)
 
     def __getitem__(self, idx):
-        name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        name_str = self.img_name_list[idx]
 
         img = imageio.imread(get_img_path(name_str, self.bset_root))
         label = imageio.imread(os.path.join(self.label_dir, name_str + '.png'))
@@ -250,7 +247,7 @@ class BoulderSegmentationDataset(Dataset):
 
         img = imutils.HWC_to_CHW(img)
 
-        return {'name': name, 'img': img, 'label': label}
+        return {'name': name_str, 'img': img, 'label': label}
 
 
 class BoulderOC12AffinityDataset(BoulderSegmentationDataset):
