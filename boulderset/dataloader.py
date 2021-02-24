@@ -174,17 +174,16 @@ class BoulderClassificationDataset(BoulderImageDataset):
 
 class BoulderClassificationDatasetMSF(BoulderClassificationDataset):
 
-    def __init__(self, img_name_list_path, voc12_root,
+    def __init__(self, img_name_list_path, bset_root,
                  img_normal=TorchvisionNormalize(),
                  scales=(1.0,)):
         self.scales = scales
 
-        super().__init__(img_name_list_path, voc12_root, img_normal=img_normal)
+        super().__init__(img_name_list_path, bset_root, img_normal=img_normal)
         self.scales = scales
 
     def __getitem__(self, idx):
-        name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        name_str = self.img_name_list[idx]
 
         img = imageio.imread(get_img_path(name_str, self.bset_root))
 
