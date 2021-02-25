@@ -9,7 +9,7 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.resnet18 = resnet18.resnet18(pretrained=True, strides=(1, 2, 2, 2))
+        self.resnet18 = resnet18.resnet18(pretrained=True)
 
         self.stage1 = nn.Sequential(self.resnet18.conv1, self.resnet18.bn1, self.resnet18.relu, self.resnet18.maxpool,
                                     self.resnet18.layer1)
