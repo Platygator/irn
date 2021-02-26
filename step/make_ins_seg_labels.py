@@ -109,6 +109,7 @@ def detect_instance(score_map, mask, class_id, max_fragment_size=0):
 
 
 def _work(process_id, model, dataset, args):
+    torch.cuda.empty_cache()
 
     n_gpus = torch.cuda.device_count()
     databin = dataset[process_id]
