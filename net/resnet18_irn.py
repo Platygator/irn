@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from net import resnet50
+from net import resnet18
 
 
 class Net(nn.Module):
@@ -10,13 +10,13 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         # backbone
-        self.resnet50 = resnet50.resnet50(pretrained=True, strides=[2, 2, 2, 1])
+        self.resnet18 = resnet18.resnet18(pretrained=True, strides=[2, 2, 2, 1])
 
-        self.stage1 = nn.Sequential(self.resnet50.conv1, self.resnet50.bn1, self.resnet50.relu, self.resnet50.maxpool)
-        self.stage2 = nn.Sequential(self.resnet50.layer1)
-        self.stage3 = nn.Sequential(self.resnet50.layer2)
-        self.stage4 = nn.Sequential(self.resnet50.layer3)
-        self.stage5 = nn.Sequential(self.resnet50.layer4)
+        self.stage1 = nn.Sequential(self.resnet18.conv1, self.resnet18.bn1, self.resnet18.relu, self.resnet18.maxpool)
+        self.stage2 = nn.Sequential(self.resnet18.layer1)
+        self.stage3 = nn.Sequential(self.resnet18.layer2)
+        self.stage4 = nn.Sequential(self.resnet18.layer3)
+        self.stage5 = nn.Sequential(self.resnet18.layer4)
         self.mean_shift = Net.MeanShift(2)
 
         # branch: class boundary detection
