@@ -86,9 +86,9 @@ def run(args):
             timer.reset_stage()
 
     infer_dataset = boulderset.dataloader.BoulderImageDataset(args.infer_list,
-                                                       bset_root=args.bset_root,
-                                                       crop_size=args.irn_crop_size,
-                                                       crop_method="top_left")
+                                                              bset_root=args.bset_root,
+                                                              crop_size=args.irn_crop_size,
+                                                              crop_method="top_left")
     infer_data_loader = DataLoader(infer_dataset, batch_size=args.irn_batch_size,
                                    shuffle=False, num_workers=args.num_workers, pin_memory=True, drop_last=True)
 

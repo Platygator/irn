@@ -40,7 +40,6 @@ def run(args):
 
     model = getattr(importlib.import_module(args.cam_network), 'Net')()
 
-
     train_dataset = boulderset.dataloader.BoulderClassificationDataset(args.train_list, bset_root=args.bset_root,
                                                                 resize_long=(320, 640), hor_flip=True,
                                                                 crop_size=512, crop_method="random")
