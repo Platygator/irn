@@ -17,7 +17,7 @@ class Net(nn.Module):
         self.stage3 = nn.Sequential(self.resnet50.layer3)
         self.stage4 = nn.Sequential(self.resnet50.layer4)
 
-        self.classifier = nn.Conv2d(2048, 2, 1, bias=False)
+        self.classifier = nn.Conv2d(2048, 1, 1, bias=False)
 
         self.backbone = nn.ModuleList([self.stage1, self.stage2, self.stage3, self.stage4])
         self.newly_added = nn.ModuleList([self.classifier])
