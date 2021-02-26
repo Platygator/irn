@@ -3,9 +3,10 @@ import torch
 from torch.backends import cudnn
 cudnn.enabled = True
 from torch.utils.data import DataLoader
-import voc12.dataloader
+import boulderset.dataloader
 from misc import pyutils, torchutils, indexing
 import importlib
+
 
 def run(args):
 
@@ -14,9 +15,9 @@ def run(args):
     model = getattr(importlib.import_module(args.irn_network), 'AffinityDisplacementLoss')(
         path_index)
 
-    train_dataset = voc12.dataloader.VOC12AffinityDataset(args.train_list,
+    train_dataset = boulderset.dataloader.BoulderAffinityDataset(args.train_list,
                                                           label_dir=args.ir_label_out_dir,
-                                                          voc12_root=args.voc12_root,
+                                                          bset_root=args.bset_root,
                                                           indices_from=path_index.src_indices,
                                                           indices_to=path_index.dst_indices,
                                                           hor_flip=True,
@@ -84,8 +85,8 @@ def run(args):
         else:
             timer.reset_stage()
 
-    infer_dataset = voc12.dataloader.VOC12ImageDataset(args.infer_list,
-                                                       voc12_root=args.voc12_root,
+    infer_dataset = boulderset.dataloader.BoulderImageDataset(args.infer_list,
+                                                       bset_root=args.bset_root,
                                                        crop_size=args.irn_crop_size,
                                                        crop_method="top_left")
     infer_data_loader = DataLoader(infer_dataset, batch_size=args.irn_batch_size,
@@ -107,5 +108,5 @@ def run(args):
         model.module.mean_shift.running_mean = torch.mean(torch.stack(dp_mean_list), dim=0)
     print('done.')
 
-    torch.save(model.module.state_dict(), args.irn_weights_name)
+    torch.save(model.state_dict(), args.irn_weights_name)
     torch.cuda.empty_cache()

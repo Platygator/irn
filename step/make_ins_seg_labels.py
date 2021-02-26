@@ -9,7 +9,7 @@ import importlib
 import os
 
 import skimage
-import voc12.dataloader
+import boulderset.dataloader
 from misc import torchutils, imutils, pyutils, indexing
 
 cudnn.enabled = True
@@ -55,6 +55,7 @@ def find_centroids_with_refinement(displacement, iterations=300):
 
     return np.stack([centroid_y, centroid_x], axis=0)
 
+
 def cluster_centroids(centroids, displacement, thres=2.5):
     # thres: threshold for grouping centroid (see supp)
 
@@ -74,10 +75,12 @@ def cluster_centroids(centroids, displacement, thres=2.5):
 
     return pyutils.to_one_hot(cluster_map)
 
+
 def separte_score_by_mask(scores, masks):
     instacne_map_expanded = torch.from_numpy(np.expand_dims(masks, 0).astype(np.float32))
     instance_score = torch.unsqueeze(scores, 1) * instacne_map_expanded.cuda()
     return instance_score
+
 
 def detect_instance(score_map, mask, class_id, max_fragment_size=0):
     # converting pixel-wise instance ids into detection form
@@ -162,8 +165,8 @@ def run(args):
 
     n_gpus = torch.cuda.device_count()
 
-    dataset = voc12.dataloader.VOC12ClassificationDatasetMSF(args.infer_list,
-                                                             voc12_root=args.voc12_root,
+    dataset = boulderset.dataloader.BoulderClassificationDatasetMSF(args.infer_list,
+                                                             bset_root=args.bset_root,
                                                              scales=(1.0,))
     dataset = torchutils.split_dataset(dataset, n_gpus)
 
