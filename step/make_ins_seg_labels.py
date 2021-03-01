@@ -135,6 +135,7 @@ def _work(process_id, model, dataset, args):
 
             centroids = find_centroids_with_refinement(dp)
             instance_map = cluster_centroids(centroids, dp)
+            np.save('instance_map.npy', instance_map)
             print("instance map: ", (instance_map), "\n", len(instance_map[0, 0]), "\n\n")
             print("cam: ", cams, "\n", len(cams[0, 0]), "\n\n")
             instance_cam = separte_score_by_mask(cams, instance_map)
