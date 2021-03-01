@@ -8,7 +8,7 @@ import numpy as np
 import importlib
 import os
 
-import skimage
+import skimage.measure
 import boulderset.dataloader
 from misc import torchutils, imutils, pyutils, indexing
 
@@ -131,6 +131,7 @@ def _work(process_id, model, dataset, args):
 
             cams = cam_dict['cam'].cuda()
             keys = cam_dict['keys']
+            # keys = torch.nonzero(pack['label'][0])[:, 0]
 
             centroids = find_centroids_with_refinement(dp)
             instance_map = cluster_centroids(centroids, dp)
