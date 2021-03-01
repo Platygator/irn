@@ -79,7 +79,7 @@ def cluster_centroids(centroids, displacement, thres=2.5):
 def separte_score_by_mask(scores, masks):
     instacne_map_expanded = torch.from_numpy(np.expand_dims(masks, 0).astype(np.float32))
     print("Masks: ", masks, "\n\n")
-    print("Scores: ", scores, "\n\n"))
+    print("Scores: ", scores, "\n\n")
     instance_score = torch.unsqueeze(scores, 1) * instacne_map_expanded.cuda()
     return instance_score
 
