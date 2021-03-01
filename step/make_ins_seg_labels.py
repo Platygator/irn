@@ -135,6 +135,8 @@ def _work(process_id, model, dataset, args):
 
             centroids = find_centroids_with_refinement(dp)
             instance_map = cluster_centroids(centroids, dp)
+            print(type(instance_map))
+            print(type(cams))
             instance_cam = separte_score_by_mask(cams, instance_map)
 
             rw = indexing.propagate_to_edge(instance_cam, edge, beta=args.beta, exp_times=args.exp_times, radius=5)
