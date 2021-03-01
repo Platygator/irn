@@ -77,6 +77,7 @@ def cluster_centroids(centroids, displacement, thres=2.5):
 
 
 def separte_score_by_mask(scores, masks):
+    masks = np.ones([1, 120, 188]).astype('bool')
     instacne_map_expanded = torch.from_numpy(np.expand_dims(masks, 0).astype(np.float32))
     instance_score = torch.unsqueeze(scores, 1) * instacne_map_expanded.cuda()
     return instance_score
@@ -135,9 +136,13 @@ def _work(process_id, model, dataset, args):
 
             centroids = find_centroids_with_refinement(dp)
             instance_map = cluster_centroids(centroids, dp)
-            np.save('instance_map.npy', instance_map)
-            print("instance map: ", (instance_map), "\n", len(instance_map[0, 0]), "\n\n")
-            print("cam: ", cams, "\n", len(cams[0, 0]), "\n\n")
+            # np.save('instance_map.npy', instance_map)
+            print("instance map: ", (instance_map), "\n",
+                  len(instance_map[0, 0]), "\n",
+                  instance_map[0, 0].all(), "\n\n")
+
+            print("cam: ", cams, "\n",
+                  len(cams[0, 0]), "\n\n")
             instance_cam = separte_score_by_mask(cams, instance_map)
 
             rw = indexing.propagate_to_edge(instance_cam, edge, beta=args.beta, exp_times=args.exp_times, radius=5)
