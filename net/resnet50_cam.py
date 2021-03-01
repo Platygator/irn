@@ -32,7 +32,7 @@ class Net(nn.Module):
 
         x = torchutils.gap2d(x, keepdims=True)
         x = self.classifier(x)
-        x = x.view(-1, 2)
+        x = x.view(-1, 1)
 
         return x
 
