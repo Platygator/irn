@@ -14,7 +14,7 @@ def run(args):
     model = getattr(importlib.import_module(args.irn_network), 'AffinityDisplacementLoss')(
         path_index)
 
-    train_dataset = bool.dataloader.BoulderAffinityDataset(args.train_list,
+    train_dataset = boulderset.dataloader.BoulderAffinityDataset(args.train_list,
                                                            label_dir=args.ir_label_out_dir,
                                                            bset_root=args.bset_root,
                                                            indices_from=path_index.src_indices,
