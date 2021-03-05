@@ -48,7 +48,8 @@ def load_image_label_list_from_xml(img_name_list, voc12_root):
 
 def load_image_label_list_from_npy(img_name_list):
     labels_dict = np.array([cls_labels_dict[img_name] for img_name in img_name_list])
-    print(labels_dict[0:10])
+    print(labels_dict[0])
+    print(type(labels_dict))
     return labels_dict
 
 def get_img_path(img_name, voc12_root):
