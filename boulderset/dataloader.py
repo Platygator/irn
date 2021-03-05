@@ -10,7 +10,7 @@ IMG_FOLDER_NAME = "images"
 # ANNOT_FOLDER_NAME = "labels"
 IGNORE = 255
 
-CAT_LIST = ['stone', 'background']
+CAT_LIST = ['stone']
 
 N_CAT = len(CAT_LIST)
 
