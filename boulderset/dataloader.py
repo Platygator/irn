@@ -48,7 +48,7 @@ cls_labels_dict = np.load('boulderset/cls_labels.npy', allow_pickle=True).item()
 def load_image_label_list_from_npy(img_name_list):
 
     # return np.array([cls_labels_dict[img_name] for img_name in img_name_list])
-    return np.array([np.array([0]) for img_name in img_name_list])
+    return np.array([np.array([1]) for img_name in img_name_list])
 
 
 def get_img_path(img_name, bset_root):

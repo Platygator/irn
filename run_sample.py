@@ -1,3 +1,7 @@
+"""
+python run_sample.py --bset_root ~/boulderSet --irn_num_epoches 1 --irn_batch_size 4 --cam_num_epoches 1 --cam_batch_size 4 --train_list ~/boulderSet/splits/train.txt --val_list ~/boulderSet/splits/val.txt --infer_list ~/boulderSet/splits/train.txt
+"""
+
 import argparse
 import os
 
