@@ -8,7 +8,7 @@ import numpy as np
 import importlib
 import os
 
-import voc12.dataloader
+import boulderset.dataloader
 from misc import torchutils, imutils
 
 cudnn.enabled = True
@@ -66,8 +66,8 @@ def run(args):
 
     n_gpus = torch.cuda.device_count()
 
-    dataset = voc12.dataloader.VOC12ClassificationDatasetMSF(args.train_list,
-                                                             voc12_root=args.voc12_root, scales=args.cam_scales)
+    dataset = boulderset.dataloader.BoulderClassificationDatasetMSF(args.train_list,
+                                                                    bset_root=args.bset_root, scales=args.cam_scales)
     dataset = torchutils.split_dataset(dataset, n_gpus)
 
     print('[ ', end='')

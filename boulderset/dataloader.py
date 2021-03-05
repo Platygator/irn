@@ -19,47 +19,48 @@ CAT_NAME_TO_NUM = dict(zip(CAT_LIST, range(len(CAT_LIST))))
 cls_labels_dict = np.load('boulderset/cls_labels.npy', allow_pickle=True).item()
 
 
-def decode_int_filename(int_filename):
-    s = str(int(int_filename))
-    return s[:4] + '_' + s[4:]
-
-
-def load_image_label_from_xml(img_name, bset_root):
-    from xml.dom import minidom
-
-    elem_list = minidom.parse(os.path.join(bset_root, ANNOT_FOLDER_NAME, decode_int_filename(img_name) + '.xml')).getElementsByTagName('name')
-
-    multi_cls_lab = np.zeros((N_CAT), np.float32)
-
-    for elem in elem_list:
-        cat_name = elem.firstChild.data
-        if cat_name in CAT_LIST:
-            cat_num = CAT_NAME_TO_NUM[cat_name]
-            multi_cls_lab[cat_num] = 1.0
-
-    return multi_cls_lab
-
-
-def load_image_label_list_from_xml(img_name_list, bset_root):
-
-    return [load_image_label_from_xml(img_name, bset_root) for img_name in img_name_list]
+# def decode_int_filename(int_filename):
+#     s = str(int(int_filename))
+#     return s[:4] + '_' + s[4:]
+#
+#
+# def load_image_label_from_xml(img_name, bset_root):
+#     from xml.dom import minidom
+#
+#     elem_list = minidom.parse(os.path.join(bset_root, ANNOT_FOLDER_NAME, decode_int_filename(img_name) + '.xml')).getElementsByTagName('name')
+#
+#     multi_cls_lab = np.zeros((N_CAT), np.float32)
+#
+#     for elem in elem_list:
+#         cat_name = elem.firstChild.data
+#         if cat_name in CAT_LIST:
+#             cat_num = CAT_NAME_TO_NUM[cat_name]
+#             multi_cls_lab[cat_num] = 1.0
+#
+#     return multi_cls_lab
+#
+#
+# def load_image_label_list_from_xml(img_name_list, bset_root):
+#
+#     return [load_image_label_from_xml(img_name, bset_root) for img_name in img_name_list]
 
 
 def load_image_label_list_from_npy(img_name_list):
 
-    return np.array([cls_labels_dict[img_name] for img_name in img_name_list])
-    # TODO always load the same one. Check Syntax
+    # return np.array([cls_labels_dict[img_name] for img_name in img_name_list])
+    return np.array([np.array([1]) for img_name in img_name_list])
 
 
 def get_img_path(img_name, bset_root):
-    if not isinstance(img_name, str):
-        img_name = decode_int_filename(img_name)
+    # if not isinstance(img_name, str):
+    #     img_name = decode_int_filename(img_name)
     return os.path.join(bset_root, IMG_FOLDER_NAME, img_name + '.png')
 
 
 def load_img_name_list(dataset_path):
 
-    img_name_list = np.loadtxt(dataset_path, dtype=np.int32)
+    # img_name_list = np.loadtxt(dataset_path, dtype=np.int32)
+    img_name_list = np.loadtxt(dataset_path, dtype=str)
 
     return img_name_list
 
@@ -132,7 +133,8 @@ class BoulderImageDataset(Dataset):
 
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        # name_str = decode_int_filename(name)
+        name_str = name
 
         img = np.asarray(imageio.imread(get_img_path(name_str, self.bset_root)))
 
@@ -162,10 +164,10 @@ class BoulderImageDataset(Dataset):
 
 class BoulderClassificationDataset(BoulderImageDataset):
 
-    def __init__(self, img_name_list_path, voc12_root,
+    def __init__(self, img_name_list_path, bset_root,
                  resize_long=None, rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False,
                  crop_size=None, crop_method=None):
-        super().__init__(img_name_list_path, voc12_root,
+        super().__init__(img_name_list_path, bset_root,
                  resize_long, rescale, img_normal, hor_flip,
                  crop_size, crop_method)
         self.label_list = load_image_label_list_from_npy(self.img_name_list)
@@ -180,17 +182,18 @@ class BoulderClassificationDataset(BoulderImageDataset):
 
 class BoulderClassificationDatasetMSF(BoulderClassificationDataset):
 
-    def __init__(self, img_name_list_path, voc12_root,
+    def __init__(self, img_name_list_path, bset_root,
                  img_normal=TorchvisionNormalize(),
                  scales=(1.0,)):
         self.scales = scales
 
-        super().__init__(img_name_list_path, voc12_root, img_normal=img_normal)
+        super().__init__(img_name_list_path, bset_root, img_normal=img_normal)
         self.scales = scales
 
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        # name_str = decode_int_filename(name)
+        name_str = name
 
         img = imageio.imread(get_img_path(name_str, self.bset_root))
 
@@ -213,12 +216,12 @@ class BoulderClassificationDatasetMSF(BoulderClassificationDataset):
 
 class BoulderSegmentationDataset(Dataset):
 
-    def __init__(self, img_name_list_path, label_dir, crop_size, voc12_root,
+    def __init__(self, img_name_list_path, label_dir, crop_size, bset_root,
                  rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False,
                  crop_method = 'random'):
 
         self.img_name_list = load_img_name_list(img_name_list_path)
-        self.voc12_root = voc12_root
+        self.bset_root = bset_root
 
         self.label_dir = label_dir
 
@@ -233,9 +236,10 @@ class BoulderSegmentationDataset(Dataset):
 
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-        name_str = decode_int_filename(name)
+        # name_str = decode_int_filename(name)
+        name_str = name
 
-        img = imageio.imread(get_img_path(name_str, self.voc12_root))
+        img = imageio.imread(get_img_path(name_str, self.bset_root))
         label = imageio.imread(os.path.join(self.label_dir, name_str + '.png'))
 
         img = np.asarray(img)
@@ -260,7 +264,7 @@ class BoulderSegmentationDataset(Dataset):
         return {'name': name, 'img': img, 'label': label}
 
 
-class VOC12AffinityDataset(BoulderSegmentationDataset):
+class Boulder12AffinityDataset(BoulderSegmentationDataset):
     def __init__(self, img_name_list_path, label_dir, crop_size, bset_root,
                  indices_from, indices_to,
                  rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False, crop_method=None):

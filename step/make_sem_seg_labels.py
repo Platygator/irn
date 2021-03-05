@@ -9,7 +9,7 @@ import importlib
 import os
 import imageio
 
-import voc12.dataloader
+import boulderset.dataloader
 from misc import torchutils, indexing
 
 cudnn.enabled = True
@@ -26,7 +26,8 @@ def _work(process_id, model, dataset, args):
         model.cuda()
 
         for iter, pack in enumerate(data_loader):
-            img_name = voc12.dataloader.decode_int_filename(pack['name'][0])
+            # img_name = boulderset.dataloader.decode_int_filename(pack['name'][0])
+            img_name = pack['name'][0]
             orig_img_size = np.asarray(pack['size'])
 
             edge, dp = model(pack['img'][0].cuda(non_blocking=True))
@@ -61,9 +62,9 @@ def run(args):
 
     n_gpus = torch.cuda.device_count()
 
-    dataset = voc12.dataloader.VOC12ClassificationDatasetMSF(args.infer_list,
-                                                             voc12_root=args.voc12_root,
-                                                             scales=(1.0,))
+    dataset = boulderset.dataloader.BoulderClassificationDatasetMSF(args.infer_list,
+                                                                    bset_root=args.bset_root,
+                                                                    scales=(1.0,))
     dataset = torchutils.split_dataset(dataset, n_gpus)
 
     print("[", end='')

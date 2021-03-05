@@ -3,7 +3,7 @@ import torch
 from torch.backends import cudnn
 cudnn.enabled = True
 from torch.utils.data import DataLoader
-import voc12.dataloader
+import boulderset.dataloader
 from misc import pyutils, torchutils, indexing
 import importlib
 
@@ -14,16 +14,16 @@ def run(args):
     model = getattr(importlib.import_module(args.irn_network), 'AffinityDisplacementLoss')(
         path_index)
 
-    train_dataset = voc12.dataloader.VOC12AffinityDataset(args.train_list,
-                                                          label_dir=args.ir_label_out_dir,
-                                                          voc12_root=args.voc12_root,
-                                                          indices_from=path_index.src_indices,
-                                                          indices_to=path_index.dst_indices,
-                                                          hor_flip=True,
-                                                          crop_size=args.irn_crop_size,
-                                                          crop_method="random",
-                                                          rescale=(0.5, 1.5)
-                                                          )
+    train_dataset = bool.dataloader.BoulderAffinityDataset(args.train_list,
+                                                           label_dir=args.ir_label_out_dir,
+                                                           bset_root=args.bset_root,
+                                                           indices_from=path_index.src_indices,
+                                                           indices_to=path_index.dst_indices,
+                                                           hor_flip=True,
+                                                           crop_size=args.irn_crop_size,
+                                                           crop_method="random",
+                                                           rescale=(0.5, 1.5)
+                                                           )
     train_data_loader = DataLoader(train_dataset, batch_size=args.irn_batch_size,
                                    shuffle=True, num_workers=args.num_workers, pin_memory=True, drop_last=True)
 
@@ -84,10 +84,10 @@ def run(args):
         else:
             timer.reset_stage()
 
-    infer_dataset = voc12.dataloader.VOC12ImageDataset(args.infer_list,
-                                                       voc12_root=args.voc12_root,
-                                                       crop_size=args.irn_crop_size,
-                                                       crop_method="top_left")
+    infer_dataset = boulderset.dataloader.BoulderImageDataset(args.infer_list,
+                                                              bset_root=args.bset_root,
+                                                              crop_size=args.irn_crop_size,
+                                                              crop_method="top_left")
     infer_data_loader = DataLoader(infer_dataset, batch_size=args.irn_batch_size,
                                    shuffle=False, num_workers=args.num_workers, pin_memory=True, drop_last=True)
 
