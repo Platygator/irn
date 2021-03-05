@@ -107,5 +107,5 @@ def run(args):
         model.module.mean_shift.running_mean = torch.mean(torch.stack(dp_mean_list), dim=0)
     print('done.')
 
-    torch.save(model.module.state_dict(), args.irn_weights_name)
+    torch.save(model.state_dict(), args.irn_weights_name)
     torch.cuda.empty_cache()
