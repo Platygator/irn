@@ -23,5 +23,5 @@ for img_path in glob.glob("fake_cam/*.png"):
     keys = torch.tensor([0])
     cam = cv2.resize(img, (125, 94))
     cam = torch.from_numpy(cam[np.newaxis, :, :])
-    cam_npy = {'keys': keys, 'cam': cam, 'high_res': img}
+    cam_npy = {'keys': keys, 'cam': cam, 'high_res': cv2.resize(img, (500, 375))}
     np.save(f"result/cam/{osp.basename(img_path)[:-4]}.npy", cam_npy)
