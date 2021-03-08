@@ -264,7 +264,7 @@ class BoulderSegmentationDataset(Dataset):
         return {'name': name, 'img': img, 'label': label}
 
 
-class Boulder12AffinityDataset(BoulderSegmentationDataset):
+class BoulderAffinityDataset(BoulderSegmentationDataset):
     def __init__(self, img_name_list_path, label_dir, crop_size, bset_root,
                  indices_from, indices_to,
                  rescale=None, img_normal=TorchvisionNormalize(), hor_flip=False, crop_method=None):
