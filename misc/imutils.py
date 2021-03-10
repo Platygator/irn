@@ -167,7 +167,9 @@ def crf_inference_label(img, labels, t=10, n_labels=21, gt_prob=0.7):
 
     q = d.inference(t)
 
-    return np.argmax(np.array(q).reshape((n_labels, h, w)), axis=0)
+    inference_label = np.argmax(np.array(q).reshape((n_labels, h, w)), axis=0)
+
+    return inference_label
 
 
 def get_strided_size(orig_size, stride):

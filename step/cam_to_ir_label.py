@@ -38,7 +38,9 @@ def _work(process_id, infer_dataset, args):
         # 2. combine confident fg & bg
         conf = fg_conf.copy()
         conf[fg_conf == 0] = 255
+        # step1 = conf.copy().astype('uint8')
         conf[bg_conf + fg_conf == 0] = 0
+        # step2 = conf.copy().astype('uint8')
 
         imageio.imwrite(os.path.join(args.ir_label_out_dir, img_name + '.png'),
                         conf.astype(np.uint8))
@@ -51,6 +53,8 @@ def run(args):
     dataset = boulderset.dataloader.BoulderImageDataset(args.train_list, bset_root=args.bset_root, img_normal=None,
                                                         to_torch=False)
     dataset = torchutils.split_dataset(dataset, args.num_workers)
+
+    # _work(0, infer_dataset=dataset, args=args)
 
     print('[ ', end='')
     multiprocessing.spawn(_work, nprocs=args.num_workers, args=(dataset, args), join=True)
