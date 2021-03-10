@@ -121,8 +121,11 @@ def _work(process_id, model, dataset, args):
 
             edge, dp = model(pack['img'][0].cuda(non_blocking=True))
 
+            print("[INFO] Type edge: ", type(edge))
+
             dp = dp.cpu().numpy()
 
+            # load CAM and Keys
             cam_dict = np.load(args.cam_out_dir + '/' + img_name + '.npy', allow_pickle=True).item()
 
             cams = cam_dict['cam'].cuda()
