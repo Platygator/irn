@@ -33,6 +33,7 @@ def _work(process_id, infer_dataset, args):
         bg_conf_cam = np.pad(cams, ((1, 0), (0, 0), (0, 0)), mode='constant', constant_values=args.conf_bg_thres)
         bg_conf_cam = np.argmax(bg_conf_cam, axis=0)
         pred = imutils.crf_inference_label(img, bg_conf_cam, n_labels=keys.shape[0])
+        # redundant keys[pred] == pred
         bg_conf = keys[pred]
 
         # 2. combine confident fg & bg
