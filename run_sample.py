@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # Inter-pixel Relation Network (IRNet)
     parser.add_argument("--irn_network", default="net.resnet50_irn", type=str)
     parser.add_argument("--irn_crop_size", default=512, type=int)
-    parser.add_argument("--irn_batch_size", default=32, type=int)
+    parser.add_argument("--irn_batch_size", default=8, type=int)
     parser.add_argument("--irn_num_epoches", default=3, type=int)
     parser.add_argument("--irn_learning_rate", default=0.1, type=float)
     parser.add_argument("--irn_weight_decay", default=1e-4, type=float)
@@ -67,10 +67,10 @@ if __name__ == '__main__':
     # Step
     parser.add_argument("--train_cam_pass", default=False)
     parser.add_argument("--make_cam_pass", default=False)
-    parser.add_argument("--cam_to_ir_label_pass", default=True)
+    parser.add_argument("--cam_to_ir_label_pass", default=False)
     parser.add_argument("--train_irn_pass", default=False)
-    parser.add_argument("--make_ins_seg_pass", default=False)
-    parser.add_argument("--make_sem_seg_pass", default=False)
+    parser.add_argument("--make_ins_seg_pass", default=True)
+    parser.add_argument("--make_sem_seg_pass", default=True)
 
     # TODO evals only available on VOC12
     parser.add_argument("--eval_cam_pass", default=False)
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         step.cam_to_ir_label.run(args)
 
     if args.train_irn_pass is True:
-        print("[INFO] IRN pass")
+        print("[INFO] Train IRN")
         import step.train_irn
 
         timer = pyutils.Timer('step.train_irn:')
