@@ -120,7 +120,10 @@ def _work(process_id, model, dataset, args):
             size = np.asarray(pack['size'])
 
             edge, dp = model(pack['img'][0].cuda(non_blocking=True))
-
+            # np.save("edge.npy", edge.cpu().numpy())
+            # np.save("dp.npy", dp.cpu().numpy())
+            #
+            # quit()
             # print("[INFO] Type edge: ", type(edge))
 
             dp = dp.cpu().numpy()
@@ -169,6 +172,8 @@ def run(args):
                                                                     bset_root=args.bset_root,
                                                                     scales=(1.0,))
     dataset = torchutils.split_dataset(dataset, n_gpus)
+
+    # _work(0, model=model, dataset=dataset, args=args)
 
     print("[ ", end='')
     multiprocessing.spawn(_work, nprocs=n_gpus, args=(model, dataset, args), join=True)
