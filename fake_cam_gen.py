@@ -18,11 +18,22 @@ import cv2
 import glob
 import os.path as osp
 
-for img_path in glob.glob("fake_cam/*.png"):
-    img = cv2.imread(img_path, 0)
-    img = img.astype("float32")/255
-    keys = torch.tensor([0])
-    cam = cv2.resize(img, (125, 94))
+for img_path in glob.glob("boulderDataSet/images/*.png"):
+    img = cv2.imread(img_path)
+
+    cl = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(2, 2))
+    rgb_planes = cv2.split(img)
+    cl_img = []
+    for p in rgb_planes:
+        cl_img.append(cl.apply(p))
+
+    equalized_colour = cv2.merge(cl_img)
+
+    saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
+    (success, saliencyMap) = saliency.computeSaliency(equalized_colour)
+    cam = cv2.resize(saliencyMap, (125, 94))
     cam = torch.from_numpy(cam[np.newaxis, :, :])
-    cam_npy = {'keys': keys, 'cam': cam, 'high_res': cv2.resize(img, (500, 375))[np.newaxis, :, :]}
+
+    cam_npy = {'keys': torch.tensor([0]), 'cam': cam, 'high_res': cv2.resize(saliencyMap, (500, 375))[np.newaxis, :, :]}
     np.save(f"result/cam/{osp.basename(img_path)[:-4]}.npy", cam_npy)
+    print(img_path)
