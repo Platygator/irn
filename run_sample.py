@@ -6,6 +6,7 @@ import argparse
 import os
 
 from misc import pyutils
+from misc.send_telegram_msg import telegram_bot_sendtext
 
 if __name__ == '__main__':
 
@@ -122,13 +123,15 @@ if __name__ == '__main__':
 
         timer = pyutils.Timer('step.train_irn:')
         step.train_irn.run(args)
+        telegram_bot_sendtext("Training IRN completed")
 
     if args.make_ins_seg_pass is True:
-        print("[INFO] make INS seg pass")
+        print("[INFO] Instance segmentation")
         import step.make_ins_seg_labels
 
         timer = pyutils.Timer('step.make_ins_seg_labels:')
         step.make_ins_seg_labels.run(args)
+        telegram_bot_sendtext("Instance segmentation completed")
 
     if args.eval_ins_seg_pass is True:
         print("[INFO] eval INS seg pass")
@@ -138,11 +141,12 @@ if __name__ == '__main__':
         step.eval_ins_seg.run(args)
 
     if args.make_sem_seg_pass is True:
-        print("[INFO] make sem seg pass")
+        print("[INFO] Semantic segmentation")
         import step.make_sem_seg_labels
 
         timer = pyutils.Timer('step.make_sem_seg_labels:')
         step.make_sem_seg_labels.run(args)
+        telegram_bot_sendtext("Semantic segmentation completed")
 
     if args.eval_sem_seg_pass is True:
         print("[INFO] eval sem seg pass")
