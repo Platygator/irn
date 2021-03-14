@@ -16,8 +16,8 @@ import numpy as np
 import torch as tc
 import cv2
 
-# name = '1613059845760941028'
-name = '02_01_00625'
+name = '1613059735756667852'
+# name = '07_04_00976'
 
 ir_label = f"result/ir_label/{name}.png"
 sem_seg = f"result/sem_seg/{name}.png"
@@ -36,12 +36,6 @@ ins_seg_npy = np.load(ins_seg_npy, allow_pickle=True).item()
 
 original_gray = cv2.cvtColor(original, cv2.COLOR_BGR2GRAY)
 
-# create semantic
-semantics = cv2.bitwise_and(original, original, mask=sem_seg)
-gray_area = np.stack((original_gray,)*3, axis=-1)
-gray_area = cv2.bitwise_or(gray_area, gray_area, mask=cv2.bitwise_not(sem_seg // 15 * 255))
-semantics += gray_area // 2
-
 # create instance
 instances = np.zeros_like(original)
 inst_masks = [k.astype('uint8') for k in ins_seg_npy['mask']]
@@ -52,6 +46,14 @@ for n, mask in enumerate(inst_masks):
     instances[:, :, 2] += mask * ran_col[n][2]
 
 instances = cv2.addWeighted(instances, 0.5, original, 0.5, 0)
+
+# create semantic
+semantics = cv2.bitwise_and(original, original, mask=sem_seg)
+gray_area = np.stack((original_gray,)*3, axis=-1)
+gray_area = cv2.bitwise_or(gray_area, gray_area, mask=cv2.bitwise_not(sem_seg // 15 * 255))
+semantics += gray_area // 2
+
+
 cv2.imwrite("semantic.png", semantics)
 cv2.imwrite("instances.png", instances)
 
@@ -62,6 +64,9 @@ cv2.imwrite("cam.png", cams_high_res[0, :, :] * 255)
 
 edge = np.load("edge.npy")
 dp = np.load("dp.npy")
+dp_coloured = np.concatenate([dp, np.ones([1, 94, 125])], axis=0)
+dp_coloured = np.transpose(dp_coloured, [1, 2, 0]).astype('float32')
+dp_coloured = cv2.cvtColor(dp_coloured, cv2.COLOR_HSV2BGR)
 print("Done")
 
 
