@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 import boulderset.dataloader
 from misc import pyutils, torchutils, indexing
 import importlib
+from os import symlink, unlink
 
 def run(args):
 
@@ -36,6 +37,8 @@ def run(args):
     ], lr=args.irn_learning_rate, weight_decay=args.irn_weight_decay, max_step=max_step)
 
     model = torch.nn.DataParallel(model).cuda()
+    print("[INFO] Loading latest state")
+    model.load_state_dict(torch.load(args.irn_weights_name + ".pth"), strict=False)
     model.train()
 
     avg_meter = pyutils.AverageMeter()
@@ -81,6 +84,13 @@ def run(args):
                       'imps:%.1f' % ((iter + 1) * args.irn_batch_size / timer.get_stage_elapsed()),
                       'lr: %.4f' % (optimizer.param_groups[0]['lr']),
                       'etc:%s' % (timer.str_estimated_complete()), flush=True)
+
+            if (optimizer.global_step - 1) % 5000 == 0:
+                print("[INFO] Saving current state")
+                torch.save(model.state_dict(), args.irn_weights_name + "_" + str(optimizer.global_step) + '.pth')
+                unlink(args.irn_weights_name + ".pth")
+                symlink("res50_irn_" + str(optimizer.global_step) + '.pth',
+                        args.irn_weights_name + ".pth")
         else:
             timer.reset_stage()
 
@@ -107,5 +117,5 @@ def run(args):
         model.module.mean_shift.running_mean = torch.mean(torch.stack(dp_mean_list), dim=0)
     print('done.')
 
-    torch.save(model.state_dict(), args.irn_weights_name)
+    torch.save(model.state_dict(), args.irn_weights_name + '.pth')
     torch.cuda.empty_cache()
