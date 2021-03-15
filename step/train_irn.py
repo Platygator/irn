@@ -6,7 +6,8 @@ from torch.utils.data import DataLoader
 import boulderset.dataloader
 from misc import pyutils, torchutils, indexing
 import importlib
-from os import symlink, unlink
+from os import symlink, unlink, readlink
+import re
 
 def run(args):
 
@@ -37,7 +38,9 @@ def run(args):
     ], lr=args.irn_learning_rate, weight_decay=args.irn_weight_decay, max_step=max_step)
 
     model = torch.nn.DataParallel(model).cuda()
-    print("[INFO] Loading latest state")
+    latest_state = readlink(args.irn_weights_name + ".pth")
+    print("[INFO] Loading latest state: ", latest_state)
+    current_iteration = int(re.search(r'irn_(\d+).pth', latest_state)[1])
     model.load_state_dict(torch.load(args.irn_weights_name + ".pth"), strict=False)
     model.train()
 
@@ -85,11 +88,12 @@ def run(args):
                       'lr: %.4f' % (optimizer.param_groups[0]['lr']),
                       'etc:%s' % (timer.str_estimated_complete()), flush=True)
 
-            if (optimizer.global_step - 1) % 5000 == 0:
+            if optimizer.global_step % 5000 == 0 and optimizer.global_step != 0:
                 print("[INFO] Saving current state")
-                torch.save(model.state_dict(), args.irn_weights_name + "_" + str(optimizer.global_step) + '.pth')
+                torch.save(model.state_dict(), args.irn_weights_name + "_"
+                           + str(optimizer.global_step + current_iteration) + '.pth')
                 unlink(args.irn_weights_name + ".pth")
-                symlink("res50_irn_" + str(optimizer.global_step) + '.pth',
+                symlink("res50_irn_" + str(optimizer.global_step + current_iteration) + '.pth',
                         args.irn_weights_name + ".pth")
         else:
             timer.reset_stage()
@@ -117,5 +121,9 @@ def run(args):
         model.module.mean_shift.running_mean = torch.mean(torch.stack(dp_mean_list), dim=0)
     print('done.')
 
-    torch.save(model.state_dict(), args.irn_weights_name + '.pth')
+    torch.save(model.state_dict(), args.irn_weights_name + '_latest.pth')
+    unlink(args.irn_weights_name + ".pth")
+    symlink("res50_irn_latest.pth",
+            args.irn_weights_name + ".pth")
+
     torch.cuda.empty_cache()
