@@ -163,7 +163,7 @@ def _work(process_id, model, dataset, args):
 
 def run(args):
     model = getattr(importlib.import_module(args.irn_network), 'EdgeDisplacement')()
-    model.load_state_dict(torch.load(args.irn_weights_name), strict=False)
+    model.load_state_dict(torch.load(args.irn_weights_name + ".pth"), strict=False)
     model.eval()
 
     n_gpus = torch.cuda.device_count()
