@@ -89,6 +89,8 @@ if __name__ == '__main__':
     pyutils.Logger(args.log_name + '.log')
     print(vars(args))
 
+    telegram_bot_sendtext("New Training started")
+
     if args.train_cam_pass is True:
         print("[INFO] Train CAM")
         import step.train_cam
@@ -122,8 +124,12 @@ if __name__ == '__main__':
         import step.train_irn
 
         timer = pyutils.Timer('step.train_irn:')
-        step.train_irn.run(args)
-        telegram_bot_sendtext("Training IRN completed")
+        try:
+            step.train_irn.run(args)
+            telegram_bot_sendtext("IRN training completed")
+        except:
+            telegram_bot_sendtext("IRN training error!")
+            quit()
 
     if args.make_ins_seg_pass is True:
         print("[INFO] Instance segmentation")
